@@ -1,6 +1,5 @@
 'use client'
 import queryString from 'query-string'
-import dateFormat from 'dateformat'
 import sha256 from 'sha256'
 import { useState } from 'react'
 import * as ip from 'ip'
@@ -20,12 +19,10 @@ export default function Home() {
         const secretKey = HASH_SECRET
         const returnUrl = VNP_RETURN
 
-        const date = new Date()
-
-        const createDate = dateFormat(date, 'yyyymmddHHmmss')
-        const orderId = dateFormat(date, 'HHmmss')
+        const createDate = getFormattedDate()
+        const orderId = getFormattedTime()
         const amount = '2155000'
-        const bankCode = 'NCB'
+        const bankCode = 'MBAPP'
 
         const orderInfo = 'Nap tien cho thue bao 0123456789. So tien 100,000'
         const orderType = 'topup'
@@ -33,7 +30,7 @@ export default function Home() {
         const currCode = 'VND'
         const set_vnp_Params: any = {}
 
-        set_vnp_Params['vnp_Version'] = '2'
+        set_vnp_Params['vnp_Version'] = '2.1.0'
         set_vnp_Params['vnp_Command'] = 'pay'
         set_vnp_Params['vnp_TmnCode'] = tmnCode
         set_vnp_Params['vnp_Locale'] = locale
@@ -45,7 +42,7 @@ export default function Home() {
         set_vnp_Params['vnp_ReturnUrl'] = returnUrl
         set_vnp_Params['vnp_IpAddr'] = ip.address()
         set_vnp_Params['vnp_CreateDate'] = createDate
-        set_vnp_Params['vnp_BankCode'] = bankCode
+        // set_vnp_Params['vnp_BankCode'] = bankCode
 
         const vnp_Params = sortObject(set_vnp_Params)
 
@@ -73,11 +70,11 @@ export default function Home() {
             }}
         >
             <Button variant='contained' onClick={handlePayment}>
-                Thanh toan
+                Dat hang
             </Button>
             <TextareaAutosize value={url} readOnly />
             <a href={url}>
-                <Button variant='contained'>Go</Button>
+                <Button variant='contained'>Thanh toan</Button>
             </a>
         </Box>
     )
@@ -101,4 +98,27 @@ function sortObject(o: any) {
     })
 
     return sorted
+}
+
+function getFormattedDate() {
+    const now = new Date()
+
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+
+    return `${year}${month}${day}${hours}${minutes}${seconds}`
+}
+
+function getFormattedTime() {
+    const now = new Date()
+
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+
+    return `${hours}${minutes}${seconds}`
 }
